@@ -47,3 +47,5 @@ build/
 
 
 .~lock.*.docx#
+
+**/CMakeLists.txt.user*
