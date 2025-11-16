@@ -1,11 +1,38 @@
 #include <iostream>
-#include <stack>
+#include <vector>
 #include <string>
 
-void printBracketPairs(const std::string &expr)
+struct Stack
 {
-    std::stack<int> stk;
-    std::cout << "Результат:\n";
+    std::vector<int> data;
+    int top;
+
+    Stack() : top(-1) {}
+
+    void push(int pos)
+    {
+        ++top;
+        if (top >= data.size())
+            data.push_back(pos);
+        else
+            data[top] = pos;
+    }
+
+    int pop()
+    {
+        if (top < 0)
+            return -1;
+        return data[top--];
+    }
+
+    bool empty() const { return top < 0; }
+};
+
+void printBracketPairs()
+{
+    Stack stk;
+    std::string expr;
+    std::getline(std::cin, expr);
     int pos = 1;
     for (char ch : expr)
     {
@@ -13,13 +40,12 @@ void printBracketPairs(const std::string &expr)
             stk.push(pos);
         else if (ch == ')')
         {
-            if (stk.empty())
+            int open = stk.pop();
+            if (open == -1)
             {
                 std::cout << "Ошибка: лишняя закрывающая скобка\n";
                 return;
             }
-            int open = stk.top();
-            stk.pop();
             std::cout << open << " " << pos << '\n';
         }
         ++pos;
@@ -34,13 +60,7 @@ int main()
     SetConsoleCP(1251);
     SetConsoleOutputCP(1251);
 #endif
-    std::string expr;
     std::cout << "Выражение (пробел в конце): ";
-    std::getline(std::cin, expr);
-    printBracketPairs(expr);
-#ifdef _WIN32
-    system("pause");
-#endif
-    return 0;
+    printBracketPairs();
 }
 // (a+(b+c)/(a-b)*(x+(y+2)*3))/2
