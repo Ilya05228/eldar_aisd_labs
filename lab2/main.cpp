@@ -1,7 +1,9 @@
 #include <iostream>
 #include <vector>
 #include <string>
-
+#ifdef _WIN32
+#include <windows.h>
+#endif
 struct Stack
 {
     std::vector<int> data;
