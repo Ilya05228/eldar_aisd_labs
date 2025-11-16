@@ -1,5 +1,4 @@
 #include <iostream>
-#include <windows.h>
 
 struct Node
 {
@@ -102,13 +101,11 @@ void deleteList(Node *head)
     }
 }
 
-CRITICAL_SECTION g_cs;
-
+#include <windows.h>
 int main()
 {
-    SetConsoleOutputCP(CP_UTF8);
-    SetConsoleCP(CP_UTF8);
-    InitializeCriticalSection(&g_cs);
+    SetConsoleCP(1251);
+    SetConsoleOutputCP(1251);
 
     int n;
     std::cout << "Введите количество элементов списка: ";
