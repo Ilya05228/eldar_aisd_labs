@@ -1,13 +1,14 @@
 #include <iostream>
+#include <string>
 #ifdef _WIN32
 #include <windows.h>
 #endif
 
 struct Node
 {
-    int id;
+    std::string id;
     Node *next;
-    Node(int val) : id(val), next(nullptr) {}
+    Node(const std::string &val) : id(val), next(nullptr) {}
 };
 
 Node *createListFromInput(int n)
@@ -15,8 +16,8 @@ Node *createListFromInput(int n)
     if (n <= 0)
         return nullptr;
 
-    std::cout << "Введите " << n << " значений для списка: ";
-    int val;
+    std::cout << "Введите " << n << " идентификаторов (длина <= 8 символов): ";
+    std::string val;
     std::cin >> val;
 
     Node *head = new Node(val);
@@ -31,38 +32,34 @@ Node *createListFromInput(int n)
     return head;
 }
 
-Node *removeFirstTwo(Node *head)
-{
-    for (int i = 0; i < 2 && head != nullptr; i++)
-    {
-        Node *temp = head;
-        head = head->next;
-        delete temp;
-    }
-    return head;
-}
-
-void replaceLast(Node *head, int newId)
-{
-    if (!head)
-        return;
-    while (head->next)
-        head = head->next;
-    head->id = newId;
-}
-
-int countElements(Node *head)
+int countStartingWith(Node *head, char letter)
 {
     int count = 0;
     while (head)
     {
-        count++;
+        if (!head->id.empty() && head->id[0] == letter)
+            count++;
         head = head->next;
     }
     return count;
 }
 
-int countBefore(Node *head, int target)
+int countAfter(Node *head, const std::string &target)
+{
+    int count = 0;
+    bool found = false;
+    while (head)
+    {
+        if (found)
+            count++;
+        if (head->id == target)
+            found = true;
+        head = head->next;
+    }
+    return found ? count : -1;
+}
+
+int countBefore(Node *head, const std::string &target)
 {
     int count = 0;
     while (head)
@@ -73,14 +70,6 @@ int countBefore(Node *head, int target)
         head = head->next;
     }
     return -1;
-}
-void copyFirstK(Node *head, int *A, int k)
-{
-    for (int i = 0; i < k && head; i++)
-    {
-        A[i] = head->id;
-        head = head->next;
-    }
 }
 
 void printList(Node *head)
@@ -110,57 +99,42 @@ int main()
     SetConsoleOutputCP(1251);
 #endif
 
-    // 1. Создание списка
     int n;
-    std::cout << "Введите количество элементов списка: ";
+    std::cout << "Введите количество идентификаторов: ";
     std::cin >> n;
     Node *head = createListFromInput(n);
 
     std::cout << "Исходный список: ";
     printList(head);
 
-    // 2. Удаление первых двух элементов
-    head = removeFirstTwo(head);
-    std::cout << "После удаления первых двух элементов: ";
-    printList(head);
+    // 3а: Количество идентификаторов, начинающихся с заданной буквы
+    char letter;
+    std::cout << "Введите букву для подсчета начинающихся с неё: ";
+    std::cin >> letter;
+    int countA = countStartingWith(head, letter);
+    std::cout << "Количество идентификаторов, начинающихся с '" << letter << "': " << countA << std::endl;
 
-    // 3 Количество элементов до заданного идентификатора
-    int target;
-    std::cout << "Введите идентификатор, чтобы узнать количество элементов до него: ";
-    std::cin >> target;
-    int before = countBefore(head, target);
-    if (before == -1)
-        std::cout << "Элемент не найден в списке." << std::endl;
+    // 3б: Количество идентификаторов, следующих после заданного
+    std::string targetAfter;
+    std::cout << "Введите идентификатор для подсчета после него: ";
+    std::cin >> targetAfter;
+    int countB = countAfter(head, targetAfter);
+    if (countB == -1)
+        std::cout << "Идентификатор '" << targetAfter << "' не найден в списке." << std::endl;
     else
-        std::cout << "Количество элементов до " << target << ": " << before << std::endl;
+        std::cout << "Количество идентификаторов после '" << targetAfter << "': " << countB << std::endl;
 
-    // 4. Замена последнего элемента
-    int newId;
-    std::cout << "Введите новое значение для последнего элемента: ";
-    std::cin >> newId;
-    replaceLast(head, newId);
-    std::cout << "После замены последнего элемента: ";
-    printList(head);
-
-    // 5. Копирование первых k элементов в массив
-    int k;
-    std::cout << "Введите k (сколько элементов скопировать в массив): ";
-    std::cin >> k;
-    int A[100];
-    int total = countElements(head);
-    if (total >= k)
-    {
-        copyFirstK(head, A, k);
-        std::cout << "Первые " << k << " элементов массива A: ";
-        for (int i = 0; i < k; i++)
-            std::cout << A[i] << " ";
-        std::cout << std::endl;
-    }
+    // 3в: Количество идентификаторов, следующих до заданного
+    std::string targetBefore;
+    std::cout << "Введите идентификатор для подсчета до него: ";
+    std::cin >> targetBefore;
+    int countC = countBefore(head, targetBefore);
+    if (countC == -1)
+        std::cout << "Идентификатор '" << targetBefore << "' не найден в списке." << std::endl;
     else
-    {
-        std::cout << "Список содержит меньше чем " << k << " элементов." << std::endl;
-    }
+        std::cout << "Количество идентификаторов до '" << targetBefore << "': " << countC << std::endl;
 
     deleteList(head);
+    system("pause");
     return 0;
 }
