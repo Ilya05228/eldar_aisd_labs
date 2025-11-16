@@ -44,3 +44,6 @@
 build/
 */build/
 **/build/
+
+
+.~lock.*.docx#
