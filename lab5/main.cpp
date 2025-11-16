@@ -202,6 +202,20 @@ void Del_All(Tree *t)
         delete t;
     }
 }
+void View(Tree *t, int level)
+{
+    if (t)
+    {
+        View(t->Right, level + 1);
+
+        for (int i = 0; i < level; i++)
+            cout << "    ";
+
+        cout << t->info << " (" << t->text << ")" << endl;
+
+        View(t->Left, level + 1);
+    }
+}
 
 int main()
 {
@@ -224,7 +238,8 @@ int main()
         cout << "6) Показать дерево (слева-справа-корень)\n";
         cout << "7) Показать четные ключи\n";
         cout << "8) Очистить дерево\n";
-        cout << "9) Выход\n";
+        cout << "9) Дерево красиво\n";
+        cout << "10) Выход\n";
         cout << "Выберите команду (1-9): ";
         cin >> choice;
 
@@ -306,12 +321,20 @@ int main()
                 cout << "Дерево уже пустое!\n";
             break;
 
-        case 9:
+        case 10:
             if (Root != NULL)
                 Del_All(Root);
             cout << "Программа завершена.\n";
             return 0;
-
+        case 9:
+            if (Root == NULL)
+                cout << "\nДерево пустое!\n";
+            else
+            {
+                cout << "\nСтруктурный вывод дерева:\n";
+                View(Root, 0);
+            }
+            break;
         default:
             cout << "Неверная команда! Выберите число от 1 до 9.\n";
         }
