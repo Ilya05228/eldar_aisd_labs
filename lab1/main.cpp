@@ -1,4 +1,7 @@
 #include <iostream>
+#ifdef _WIN32
+#include <windows.h>
+#endif
 
 struct Node
 {
@@ -59,6 +62,18 @@ int countElements(Node *head)
     return count;
 }
 
+int countBefore(Node *head, int target)
+{
+    int count = 0;
+    while (head)
+    {
+        if (head->id == target)
+            return count;
+        count++;
+        head = head->next;
+    }
+    return -1;
+}
 void copyFirstK(Node *head, int *A, int k)
 {
     for (int i = 0; i < k && head; i++)
@@ -78,19 +93,6 @@ void printList(Node *head)
     std::cout << std::endl;
 }
 
-int countBefore(Node *head, int target)
-{
-    int count = 0;
-    while (head)
-    {
-        if (head->id == target)
-            return count;
-        count++;
-        head = head->next;
-    }
-    return 0;
-}
-
 void deleteList(Node *head)
 {
     while (head)
@@ -101,42 +103,52 @@ void deleteList(Node *head)
     }
 }
 
-#include <windows.h>
 int main()
 {
+#ifdef _WIN32
     SetConsoleCP(1251);
     SetConsoleOutputCP(1251);
+#endif
 
+    // 1. Создание списка
     int n;
     std::cout << "Введите количество элементов списка: ";
     std::cin >> n;
-
     Node *head = createListFromInput(n);
 
     std::cout << "Исходный список: ";
     printList(head);
 
+    // 2. Удаление первых двух элементов
     head = removeFirstTwo(head);
     std::cout << "После удаления первых двух элементов: ";
     printList(head);
 
-    int givenId;
-    std::cout << "Введите новое значение для последнего элемента: ";
-    std::cin >> givenId;
+    // 3 Количество элементов до заданного идентификатора
+    int target;
+    std::cout << "Введите идентификатор, чтобы узнать количество элементов до него: ";
+    std::cin >> target;
+    int before = countBefore(head, target);
+    if (before == -1)
+        std::cout << "Элемент не найден в списке." << std::endl;
+    else
+        std::cout << "Количество элементов до " << target << ": " << before << std::endl;
 
-    replaceLast(head, givenId);
-    std::cout << "После замены последнего элемента на " << givenId << ": ";
+    // 4. Замена последнего элемента
+    int newId;
+    std::cout << "Введите новое значение для последнего элемента: ";
+    std::cin >> newId;
+    replaceLast(head, newId);
+    std::cout << "После замены последнего элемента: ";
     printList(head);
 
-    int numElements = countElements(head);
-    std::cout << "Количество элементов в списке: " << numElements << std::endl;
-
+    // 5. Копирование первых k элементов в массив
     int k;
     std::cout << "Введите k (сколько элементов скопировать в массив): ";
     std::cin >> k;
-
     int A[100];
-    if (numElements >= k)
+    int total = countElements(head);
+    if (total >= k)
     {
         copyFirstK(head, A, k);
         std::cout << "Первые " << k << " элементов массива A: ";
@@ -149,13 +161,6 @@ int main()
         std::cout << "Список содержит меньше чем " << k << " элементов." << std::endl;
     }
 
-    int target;
-    std::cout << "Введите идентификатор, чтобы узнать количество элементов ДО него: ";
-    std::cin >> target;
-    std::cout << "Количество элементов до " << target << ": "
-              << countBefore(head, target) << std::endl;
-
     deleteList(head);
-    DeleteCriticalSection(&g_cs);
     return 0;
 }
