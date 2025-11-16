@@ -103,6 +103,7 @@
     "typeinfo": "cpp",
     "fstream": "cpp",
     "cerrno": "cpp",
-    "climits": "cpp"
+    "climits": "cpp",
+    "list": "cpp"
   }
 }
