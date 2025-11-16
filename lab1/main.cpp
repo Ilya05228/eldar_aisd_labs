@@ -1,4 +1,5 @@
 #include <iostream>
+#include <windows.h>
 
 struct Node
 {
@@ -78,6 +79,19 @@ void printList(Node *head)
     std::cout << std::endl;
 }
 
+int countBefore(Node *head, int target)
+{
+    int count = 0;
+    while (head)
+    {
+        if (head->id == target)
+            return count;
+        count++;
+        head = head->next;
+    }
+    return 0;
+}
+
 void deleteList(Node *head)
 {
     while (head)
@@ -88,8 +102,14 @@ void deleteList(Node *head)
     }
 }
 
+CRITICAL_SECTION g_cs;
+
 int main()
 {
+    SetConsoleOutputCP(CP_UTF8);
+    SetConsoleCP(CP_UTF8);
+    InitializeCriticalSection(&g_cs);
+
     int n;
     std::cout << "Введите количество элементов списка: ";
     std::cin >> n;
@@ -132,6 +152,13 @@ int main()
         std::cout << "Список содержит меньше чем " << k << " элементов." << std::endl;
     }
 
+    int target;
+    std::cout << "Введите идентификатор, чтобы узнать количество элементов ДО него: ";
+    std::cin >> target;
+    std::cout << "Количество элементов до " << target << ": "
+              << countBefore(head, target) << std::endl;
+
     deleteList(head);
+    DeleteCriticalSection(&g_cs);
     return 0;
 }
