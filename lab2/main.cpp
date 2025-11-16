@@ -1,46 +1,46 @@
 #include <iostream>
-#include <string>
 #include <stack>
-#ifdef _WIN32
-#include <windows.h>
-#endif
+#include <string>
 
-using namespace std;
+void printBracketPairs(const std::string &expr)
+{
+    std::stack<int> stk;
+    std::cout << "Результат:\n";
+    int pos = 1;
+    for (char ch : expr)
+    {
+        if (ch == '(')
+            stk.push(pos);
+        else if (ch == ')')
+        {
+            if (stk.empty())
+            {
+                std::cout << "Ошибка: лишняя закрывающая скобка\n";
+                return;
+            }
+            int open = stk.top();
+            stk.pop();
+            std::cout << open << " " << pos << '\n';
+        }
+        ++pos;
+    }
+    if (!stk.empty())
+        std::cout << "Ошибка: не закрыты скобки\n";
+}
+
 int main()
 {
 #ifdef _WIN32
     SetConsoleCP(1251);
     SetConsoleOutputCP(1251);
 #endif
-    string expr;
-    cout << "Введите скобочное выражение (окончание пробел): ";
-    getline(cin, expr);
-
-    stack<int> stk;
-    for (int i = 0; i < expr.length(); ++i)
-    {
-        if (expr[i] == '(')
-        {
-            stk.push(i + 1);
-        }
-        else if (expr[i] == ')')
-        {
-            if (stk.empty())
-            {
-                cout << "Ошибка: лишняя закрывающая скобка на " << (i + 1) << endl;
-                return 1;
-            }
-            int open = stk.top();
-            stk.pop();
-            cout << open << " " << (i + 1) << endl;
-        }
-    }
-
-    if (!stk.empty())
-    {
-        cout << "Ошибка: лишняя открывающая скобка" << endl;
-    }
-
+    std::string expr;
+    std::cout << "Выражение (пробел в конце): ";
+    std::getline(std::cin, expr);
+    printBracketPairs(expr);
+#ifdef _WIN32
     system("pause");
+#endif
     return 0;
 }
+// (a+(b+c)/(a-b)*(x+(y+2)*3))/2

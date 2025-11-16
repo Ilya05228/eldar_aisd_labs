@@ -135,6 +135,5 @@ int main()
         std::cout << "Количество идентификаторов до '" << targetBefore << "': " << countC << std::endl;
 
     deleteList(head);
-    system("pause");
     return 0;
 }
